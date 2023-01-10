@@ -1,0 +1,15 @@
+#ifndef TENSOR_H
+#define TENSOR_H
+
+#include <cstdlib>
+#include <utility>
+#include <type_traits>
+
+#include "unroll.h"
+#include "tensor_base.h"
+#include "dense_base.h"
+#include "tensor.h"
+#include "binary_operator.h"
+#include "constant.h"
+
+#endif
