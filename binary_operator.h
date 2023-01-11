@@ -15,7 +15,11 @@ namespace tsr{
             typename Lhs,
             typename Rhs,
             typename Result=decltype(typename Lhs::Scalar() +
-                                     typename Rhs::Scalar())>
+                                     typename Rhs::Scalar()),
+            std::enable_if_t<
+              std::is_same<typename Lhs::Shape,
+                           typename Rhs::Shape>::value, int> = 0
+            >
   class BinaryOperator:
     public TensorBase<BinaryOperator<OperatorTemplate, Lhs, Rhs, Result>> {
     const TensorBase<Lhs>& lhs;
