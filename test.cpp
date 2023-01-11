@@ -7,7 +7,7 @@ using namespace tsr;
 
 
 int test_tensor() {
-  cout << "test tensor" << endl;
+   cout << "test tensor" << endl;
   
   constexpr Tensor<double, 2, 3> t1 = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
   cout << t1 << endl;
@@ -70,7 +70,21 @@ int test_constant() {
   
   cout << "test constant complete" << endl;
   return 0;
-  }
+}
+
+
+int test_binary_operator() {
+  cout << "test binary operator" << endl;
+  Tensor<double, 2, 3> a = {1., 2., 3., 4., 5., 6.};
+  Tensor<double, 2, 3> b = {.1, .2, .3, .4, .5, .6};
+  auto c = a + b;
+  auto d = a - b;
+  auto e = Constant<double, 2, 3>(1.5);
+  auto f = (c + d) * e;
+  cout << f / Constant<double, 2, 3>(1.) << endl;
+  cout << "test binary operator complete" << endl;
+  return 0;
+}
 
 
 int main() {
@@ -94,6 +108,7 @@ int main() {
   test_tensor();
   test_map();
   test_constant();
+  test_binary_operator();
   
   return 0;
 }
