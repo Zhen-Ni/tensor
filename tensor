@@ -4,12 +4,17 @@
 #include <cstdlib>
 #include <utility>
 #include <type_traits>
+#include <sstream>
 
 #include "unroll.h"
+#include "shape.h"
 #include "tensor_base.h"
 #include "dense_base.h"
+#include "map.h"
 #include "tensor.h"
 #include "binary_operator.h"
 #include "constant.h"
+
+#include "io.h"
 
 #endif

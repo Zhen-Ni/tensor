@@ -4,47 +4,38 @@
 #ifndef NDEBUG
 #include <cstdlib>
 #include <type_traits>
+#include "shape.h"
 #endif
 
 
 namespace tsr {
 
-  template <size_t... dims>
-  struct ShapeType;
-
-  
   template <typename Derived>
-  struct TensorTraits;
+  struct BaseTraits;
 
+
+  template <typename T, size_t... dims>
+  class Tensor;
   
-  template <size_t dim0, size_t... dims>
-  struct ShapeType<dim0, dims...> {
-    using ContainedType = ShapeType<dims...>;
-    static constexpr size_t dimension = sizeof...(dims) + 1;
-    static constexpr size_t stride = ShapeType<dims...>::size;
-    static constexpr size_t size = dim0 * stride;
-    static constexpr size_t get_dimension() {return dimension;}
-    static constexpr size_t get_stride() {return stride;}
-    static constexpr size_t get_size() {return size;}
-  };
 
+  namespace internal{
+    template <typename T, typename ShapeType, size_t... dims>
+    struct get_tensor {
+      using type = typename get_tensor<T, typename ShapeType::ContainedType, dims..., ShapeType::size0>::type;
+    };
+
+    template <typename T, size_t... dims>
+    struct get_tensor<T, internal::ShapeType<>, dims...> {
+      using type = Tensor<T, dims...>;
+    };
+      
+  } // end of namespace internal
   
-  template <>
-  struct ShapeType<> {
-    using ContainedType = void;
-    static constexpr size_t dimension = 0;
-    static constexpr size_t stride = 0; // undefined: can be any value
-    static constexpr size_t size = 1;
-    static constexpr size_t get_dimension() {return dimension;}
-    static constexpr size_t get_stride() {return stride;}
-    static constexpr size_t get_size() {return size;}
-  };
-
-
+  
   template <typename Derived>
   class TensorBase {
   public:
-    using Traits = TensorTraits<Derived>;
+    using Traits = BaseTraits<Derived>;
     using Shape = typename Traits::Shape;
     using Scalar = typename Traits::Scalar;
 
@@ -57,19 +48,29 @@ namespace tsr {
     constexpr const Derived* get_derived() const {
       return static_cast<const Derived*>(this);
     }
-    
-  protected:
-    template<typename Shape=Shape, typename... Rest>
-    constexpr size_t decode_index(size_t n, Rest... rest) const {
-      return n * Shape::stride +
-        decode_index<typename Shape::ContainedType>(rest...);
-    }
-    template<typename Shape>
-    constexpr size_t decode_index() const {return 0;}
-    
+        
   public:
     constexpr auto sequence(size_t n) {return get_derived()->sequence(n);}
     constexpr auto sequence(size_t n) const {return get_derived()->sequence(n);}
+    
+    template<typename... Index,
+             // Make sure the number of arguments is correct
+             std::enable_if_t<std::integral_constant<bool, !(sizeof...(Index)-Shape::get_dimension())>::value, int> =0>
+    constexpr auto operator()(Index... index) {
+      return sequence(internal::decode_index<Shape>(index...));
+    }
+    template<typename... Index,
+               // Make sure the number of arguments is correct
+             std::enable_if_t<std::integral_constant<bool, !(sizeof...(Index)-Shape::get_dimension())>::value, int> =0>
+    constexpr auto operator()(Index... index) const {
+      return sequence(internal::decode_index<Shape>(index...));
+    }
+
+    constexpr auto eval() const {
+      typename internal::get_tensor<double, Shape>::type res;
+      res = *this;
+      return res;
+    }
 
     
   };

@@ -39,7 +39,7 @@ namespace tsr{
             typename Lhs,
             typename Rhs,
             typename Result>
-  struct TensorTraits<BinaryOperator<OperatorTemplate, Lhs, Rhs, Result>> {
+  struct BaseTraits<BinaryOperator<OperatorTemplate, Lhs, Rhs, Result>> {
     using Shape = typename Lhs::Shape;
     using Scalar = Result;
   };
