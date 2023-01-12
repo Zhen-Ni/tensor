@@ -5,6 +5,7 @@
 #ifndef NDEBUG
 #include <cstdlib>
 #include <type_traits>
+#include <array>
 #include "shape.h"
 #include "dense_base.h"
 #include "map.h"
@@ -16,8 +17,8 @@ namespace tsr {
  
   template <typename T, size_t... dims>
   class Tensor: public DenseBase<Tensor<T, dims...>> {
-    friend class TensorBase<Tensor>;
-    friend class DenseBase<Tensor>;
+    //friend class TensorBase<Tensor>;
+    // friend class DenseBase<Tensor>;
 
     using Parent = DenseBase<Tensor>;
 
@@ -27,6 +28,7 @@ namespace tsr {
     
   private:
     Scalar data[Shape::size];
+    // std::array<Scalar, Shape::size> data;
     
   public:
     constexpr Scalar* get_data() {return data;}
@@ -37,7 +39,18 @@ namespace tsr {
 
   public:
     constexpr Tensor() {};
-    template <typename... E>
+    constexpr Tensor(std::initializer_list<Scalar> l) {
+      auto it = l.begin();
+      Unroll<0, Shape::size>::map([&](size_t idx) {data[idx]=*it++;});
+           }
+    template<typename U>
+    constexpr Tensor(const TensorBase<U>& t) {this->operator=(t);}
+    // The following constructor is enabled only when the number
+    // of input arguments is larger than 1.
+    // Note that the default constructor is selected when there's
+    // no input arguments.
+    template <typename... E,
+              std::enable_if_t<sizeof...(E) != 1, int> = 0>
     constexpr Tensor(const E&... e): data{e...} {}
 
     using Parent::operator=;    

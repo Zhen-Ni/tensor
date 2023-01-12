@@ -9,7 +9,9 @@ using namespace tsr;
 int test_tensor() {
    cout << "test tensor" << endl;
   
-  constexpr Tensor<double, 2, 3> t1 = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
+  Tensor<double, 2, 3> t10 = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
+  constexpr Tensor<double, 2, 3> t11 (1.1, 2.2, 3.3, 4.4, 5.5, 6.6);
+  auto t1 = t10;
   cout << t1 << endl;
 
   Tensor<int, 2, 3> t2;
@@ -31,8 +33,8 @@ int test_tensor() {
 int test_map() {
   cout << "test map" << endl;
   
-  constexpr Tensor<double, 2, 3, 2> t1 = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6,
-                                          7.7, 8.8, 9.9, 10., 11., 12.};
+  Tensor<double, 2, 3, 2> t1 = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6,
+    7.7, 8.8, 9.9, 10., 11., 12.};
   cout << t1 << endl;
   
   auto m1 = t1[0];
@@ -80,7 +82,13 @@ int test_binary_operator() {
   auto c = a + b;
   auto d = a - b;
   auto e = Constant<double, 2, 3>(1.5);
-  auto f = (c + d) * e;
+  // DO NOT USE auto here!
+  // as (c + d) generates a temprary object, which will be
+  // deconstructed immediately after the statement is executed.
+  // If auto is used here, f will be an expression template holding
+  // the temporary object (c + d), which leads to a dangling
+  // reference when f is further used.
+  Tensor<double, 2, 3> f = (c + d) * e;
   cout << f / Constant<double, 2, 3>(1.) << endl;
   cout << "test binary operator complete" << endl;
   return 0;
@@ -88,7 +96,7 @@ int test_binary_operator() {
 
 
 int main() {
-  constexpr Tensor<double, 2, 3> t1 = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
+  constexpr Tensor<double, 2, 3> t1(1.1, 2.2, 3.3, 4.4, 5.5, 6.6);
   cout << t1(1,1) << endl;
 
   Tensor<int, 2, 3> t2;
@@ -101,7 +109,6 @@ int main() {
   cout << t3(1,1) << endl;
 
   Constant<double, 2, 3> t4(1.2);
-  t4 = 2.2;
   t3 = t4 + t3;
   cout << t3(1,1) << endl;
 

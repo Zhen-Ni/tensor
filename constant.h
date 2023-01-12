@@ -16,12 +16,10 @@ namespace tsr {
     using Scalar = typename Traits::Scalar;
 
   private:
-    Scalar value;
+    const Scalar value;
     
   public:
-    constexpr Constant() {}
     constexpr Constant(const Scalar& value): value(value) {}
-
     constexpr Scalar sequence(size_t n) const {return value;}
   };
 

@@ -2,9 +2,7 @@
 #define BINARY_OPERATOR_H
 
 #ifndef NDEBUG
-#include <cstdlib>
 #include <type_traits>
-#include "unroll.h"
 #include "tensor_base.h"
 #endif
 
@@ -22,8 +20,8 @@ namespace tsr{
             >
   class BinaryOperator:
     public TensorBase<BinaryOperator<OperatorTemplate, Lhs, Rhs, Result>> {
-    const TensorBase<Lhs>& lhs;
-    const TensorBase<Rhs>& rhs;
+    const Lhs& lhs;
+    const Rhs& rhs;
     using Operator = OperatorTemplate<typename Lhs::Scalar,
                                       typename Rhs::Scalar,
                                       Result>;
@@ -31,7 +29,7 @@ namespace tsr{
   public:
     constexpr BinaryOperator(const TensorBase<Lhs>& lhs,
                              const TensorBase<Rhs>& rhs):
-      lhs(lhs), rhs(rhs) {}
+      lhs(*static_cast<const Lhs*>(&lhs)), rhs(*static_cast<const Rhs*>(&rhs)) {}
 
     constexpr auto sequence(size_t n) const {
       return Operator::call(lhs.sequence(n), rhs.sequence(n));
@@ -39,6 +37,7 @@ namespace tsr{
     
   };
 
+  
   template <template<typename, typename, typename> class OperatorTemplate,
             typename Lhs,
             typename Rhs,

@@ -51,15 +51,6 @@ namespace tsr {
       return *get_derived();
     }
     
-    template<typename U>
-    Derived& operator=(const DenseBase<U>& other) {
-      Unroll<0, Shape::get_size()>::
-        map([&](size_t index, const DenseBase<U>& y)
-            {sequence_ref(index)=y.sequence_ref(index);},
-          other);
-      return *get_derived();
-    } 
-    
     template<typename... Index,
              // Make sure the number of arguments is correct
              std::enable_if_t<

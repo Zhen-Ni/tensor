@@ -67,7 +67,7 @@ namespace tsr {
     }
 
     constexpr auto eval() const {
-      typename internal::get_tensor<double, Shape>::type res;
+      typename internal::get_tensor<Scalar, Shape>::type res;
       res = *this;
       return res;
     }
