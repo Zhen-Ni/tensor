@@ -95,6 +95,16 @@ int test_binary_operator() {
 }
 
 
+int test_unary_operator() {
+  cout << "test unary operator" << endl;
+  Tensor<float, 1> a{1};
+  Tensor<float, 1> b = -a;
+  std::cout << (a(0) == -b(0)) << std::endl;
+  cout << "test unary operator complete" << endl;
+  return 0;
+}
+
+
 int main() {
   constexpr Tensor<double, 2, 3> t1(1.1, 2.2, 3.3, 4.4, 5.5, 6.6);
   cout << t1(1,1) << endl;
@@ -116,6 +126,7 @@ int main() {
   test_map();
   test_constant();
   test_binary_operator();
+  test_unary_operator();
   
   return 0;
 }

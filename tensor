@@ -12,6 +12,7 @@
 #include "dense_base.h"
 #include "map.h"
 #include "tensor.h"
+#include "unary_operator.h"
 #include "binary_operator.h"
 #include "constant.h"
 

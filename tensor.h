@@ -39,10 +39,12 @@ namespace tsr {
 
   public:
     constexpr Tensor() {};
-    constexpr Tensor(std::initializer_list<Scalar> l) {
-      auto it = l.begin();
-      Unroll<0, Shape::size>::map([&](size_t idx) {data[idx]=*it++;});
-           }
+    // Seems difficult to use constexpr for initializer_list...
+    Tensor(const std::initializer_list<Scalar>& l) {
+      Scalar* it1 = data;
+      auto it2 = l.begin();
+      Unroll<0, Shape::size>::map([&it1,&it2](size_t) {*it1=*it2++;});
+    }
     template<typename U>
     constexpr Tensor(const TensorBase<U>& t) {this->operator=(t);}
     // The following constructor is enabled only when the number
