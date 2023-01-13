@@ -102,6 +102,18 @@ namespace tsr{
                                   const TensorBase<Rhs>& rhs) {
     return BinaryOperator<DivModOperator, Lhs, Rhs>(lhs, rhs);
   }
+
+  template <typename Lhs, typename Rhs, typename Res>
+  struct EqOperator{
+    static constexpr Res call(const Lhs& lhs, const Rhs& rhs) {return lhs == rhs;}
+  };
+
+  template <typename Lhs, typename Rhs>
+  inline constexpr auto operator==(const TensorBase<Lhs>& lhs,
+                                   const TensorBase<Rhs>& rhs) {
+    return BinaryOperator<EqOperator, Lhs, Rhs, bool>(lhs, rhs);
+  }
+
   
 } // namespace tsr
 
