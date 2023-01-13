@@ -55,15 +55,15 @@ namespace tsr {
     
     template<typename... Index,
              // Make sure the number of arguments is correct
-             std::enable_if_t<std::integral_constant<bool, !(sizeof...(Index)-Shape::get_dimension())>::value, int> =0>
+             std::enable_if_t<std::integral_constant<bool, !(sizeof...(Index)-Shape::dimension)>::value, int> =0>
     constexpr auto operator()(Index... index) {
-      return sequence(internal::decode_index<Shape>(index...));
+      return sequence(Shape::decode_index(index...));
     }
     template<typename... Index,
                // Make sure the number of arguments is correct
-             std::enable_if_t<std::integral_constant<bool, !(sizeof...(Index)-Shape::get_dimension())>::value, int> =0>
+             std::enable_if_t<std::integral_constant<bool, !(sizeof...(Index)-Shape::dimension)>::value, int> =0>
     constexpr auto operator()(Index... index) const {
-      return sequence(internal::decode_index<Shape>(index...));
+      return sequence(Shape::decode_index(index...));
     }
 
     constexpr auto eval() const {

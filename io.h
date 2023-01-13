@@ -18,7 +18,7 @@ namespace tsr {
   std::ostream& operator<<(std::ostream& os, const DenseBase<T>& tensor)
   {
     os << "[";
-    Unroll<0, T::Shape::get_size0()>::
+    Unroll<0, T::Shape::size0>::
       map([&](size_t index) {os << tensor[index] << ",\n ";});
     os << "]";
     return os;
@@ -29,7 +29,7 @@ namespace tsr {
   std::ostream& operator<<(std::ostream& os, const DenseBase<T>& tensor)
   {
     os << "[";
-    Unroll<0, T::Shape::get_size0()>::
+    Unroll<0, T::Shape::size0>::
       map([&](size_t index) {os << tensor[index] << ", ";});
     os << "]";
     return os;

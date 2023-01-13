@@ -59,11 +59,11 @@ namespace tsr {
     
     constexpr auto operator[](size_t n)
     {return typename internal::map_slice<Scalar, dims...>::type
-        (&data[Shape::get_stride() * n]);}
+        (&data[Shape::stride * n]);}
 
     constexpr auto operator[](size_t n) const
     {return typename internal::map_slice<const Scalar, dims...>::type
-        (&data[Shape::get_stride() * n]);}
+        (&data[Shape::stride * n]);}
   };
 
 
