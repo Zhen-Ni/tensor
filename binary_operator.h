@@ -114,6 +114,60 @@ namespace tsr{
     return BinaryOperator<EqOperator, Lhs, Rhs, bool>(lhs, rhs);
   }
 
+  template <typename Lhs, typename Rhs, typename Res>
+  struct NeOperator{
+    static constexpr Res call(const Lhs& lhs, const Rhs& rhs) {return lhs != rhs;}
+  };
+
+  template <typename Lhs, typename Rhs>
+  inline constexpr auto operator!=(const TensorBase<Lhs>& lhs,
+                                   const TensorBase<Rhs>& rhs) {
+    return BinaryOperator<NeOperator, Lhs, Rhs, bool>(lhs, rhs);
+  }
+  
+  template <typename Lhs, typename Rhs, typename Res>
+  struct LtOperator{
+    static constexpr Res call(const Lhs& lhs, const Rhs& rhs) {return lhs < rhs;}
+  };
+
+  template <typename Lhs, typename Rhs>
+  inline constexpr auto operator<(const TensorBase<Lhs>& lhs,
+                                  const TensorBase<Rhs>& rhs) {
+    return BinaryOperator<LtOperator, Lhs, Rhs, bool>(lhs, rhs);
+  }
+
+  template <typename Lhs, typename Rhs, typename Res>
+  struct GtOperator{
+    static constexpr Res call(const Lhs& lhs, const Rhs& rhs) {return lhs > rhs;}
+  };
+
+  template <typename Lhs, typename Rhs>
+  inline constexpr auto operator>(const TensorBase<Lhs>& lhs,
+                                  const TensorBase<Rhs>& rhs) {
+    return BinaryOperator<GtOperator, Lhs, Rhs, bool>(lhs, rhs);
+  }
+
+  template <typename Lhs, typename Rhs, typename Res>
+  struct LeOperator{
+    static constexpr Res call(const Lhs& lhs, const Rhs& rhs) {return lhs <= rhs;}
+  };
+
+  template <typename Lhs, typename Rhs>
+  inline constexpr auto operator<=(const TensorBase<Lhs>& lhs,
+                                   const TensorBase<Rhs>& rhs) {
+    return BinaryOperator<LeOperator, Lhs, Rhs, bool>(lhs, rhs);
+  }
+
+  template <typename Lhs, typename Rhs, typename Res>
+  struct GeOperator{
+    static constexpr Res call(const Lhs& lhs, const Rhs& rhs) {return lhs >= rhs;}
+  };
+
+  template <typename Lhs, typename Rhs>
+  inline constexpr auto operator>=(const TensorBase<Lhs>& lhs,
+                                   const TensorBase<Rhs>& rhs) {
+    return BinaryOperator<GeOperator, Lhs, Rhs, bool>(lhs, rhs);
+  }
   
 } // namespace tsr
 
