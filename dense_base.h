@@ -43,20 +43,24 @@ namespace tsr {
     }
     
     template<typename U>
-    Derived& operator=(const TensorBase<U>& other) {
+    constexpr Derived& operator=(const TensorBase<U>& other) {
+      // C++ supports constexpr lambda since C++17
+#if __cplusplus >= 201703L
       Unroll<0, Shape::size>::
-        map([&](size_t index, const TensorBase<U>& y)
-            {sequence_ref(index)=y.sequence(index);},
+        map([&](size_t index, const TensorBase<U>& y) constexpr {
+          sequence_ref(index)=y.sequence(index);},
           other);
-      return *get_derived();
+#else
+      Unroll<0, Shape::size>::
+        assign(*this, other);
+#endif
+       return *get_derived();
     }
     
     template<typename... Index,
              // Make sure the number of arguments is correct
              std::enable_if_t<
-               std::integral_constant<bool,
-                                      !(sizeof...(Index)-Shape::dimension)
-                                      >::value, int> =0
+               sizeof...(Index)==Shape::dimension, int> =0
              >
     constexpr auto& operator()(Index... index) {
       return sequence_ref(Shape::decode_index(index...));
@@ -64,9 +68,7 @@ namespace tsr {
     template<typename... Index,
              // Make sure the number of arguments is correct
              std::enable_if_t<
-               std::integral_constant<bool,
-                                      !(sizeof...(Index)-Shape::dimension)
-                                      >::value, int> =0
+               sizeof...(Index)==Shape::dimension, int> =0
              >
     constexpr const auto& operator()(Index... index) const {
       return sequence_ref(Shape::decode_index(index...));

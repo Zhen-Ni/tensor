@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <type_traits>
 #include "shape.h"
+#include "unroll.h"
 #endif
 
 
@@ -13,9 +14,11 @@ namespace tsr {
   template <typename Derived>
   struct BaseTraits;
 
-
   template <typename T, size_t... dims>
   class Tensor;
+
+  template <typename T>
+  class TensorBase;
   
 
   namespace internal{
@@ -28,7 +31,7 @@ namespace tsr {
     struct get_tensor<T, internal::ShapeType<>, dims...> {
       using type = Tensor<T, dims...>;
     };
-      
+
   } // end of namespace internal
   
   
@@ -55,26 +58,46 @@ namespace tsr {
     
     template<typename... Index,
              // Make sure the number of arguments is correct
-             std::enable_if_t<std::integral_constant<bool, !(sizeof...(Index)-Shape::dimension)>::value, int> =0>
+             std::enable_if_t<
+               sizeof...(Index)==Shape::dimension, int> = 0>
     constexpr auto operator()(Index... index) {
       return sequence(Shape::decode_index(index...));
     }
     template<typename... Index,
                // Make sure the number of arguments is correct
-             std::enable_if_t<std::integral_constant<bool, !(sizeof...(Index)-Shape::dimension)>::value, int> =0>
+             std::enable_if_t<
+               sizeof...(Index)==Shape::dimension, int> = 0>
     constexpr auto operator()(Index... index) const {
       return sequence(Shape::decode_index(index...));
     }
 
+    // This constexpr only works since c++20
     constexpr auto eval() const {
       typename internal::get_tensor<Scalar, Shape>::type res;
       res = *this;
       return res;
     }
+    
+    
+    // Additional class methods
+    
+    constexpr bool any() const {
+      for (size_t i = 0; i != Shape::size; ++i) {
+        if (sequence(i)) { return true; }
+      }
+      return false;
+    }
 
+    constexpr bool all() const {
+      for (size_t i = 0; i != Shape::size; ++i) {
+        if (!sequence(i)) { return false; }
+      }
+      return true;
+    }
     
   };
-    
+
+
 } // namespace tsr
 
 #endif

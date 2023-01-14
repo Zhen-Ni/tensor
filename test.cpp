@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <iostream>
 using namespace std;
 
@@ -11,6 +12,7 @@ int test_tensor() {
   
   Tensor<double, 2, 3> t10 = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
   constexpr Tensor<double, 2, 3> t11 (1.1, 2.2, 3.3, 4.4, 5.5, 6.6);
+  cout << t11 << endl;
   auto t1 = t10;
   cout << t1 << endl;
 
@@ -97,9 +99,9 @@ int test_binary_operator() {
 
 int test_unary_operator() {
   cout << "test unary operator" << endl;
-  Tensor<float, 1> a{1};
-  Tensor<float, 1> b = -a;
-  std::cout << (a(0) == -b(0)) << std::endl;
+  constexpr Tensor<float, 2> a(1.5f, 2.5f);
+  Tensor<float, 2> b = -a;
+  assert((a==-b).all());
   cout << "test unary operator complete" << endl;
   return 0;
 }
@@ -108,7 +110,7 @@ int test_unary_operator() {
 int main() {
 
   test_tensor();
-  test_map();
+   test_map();
   test_constant();
   test_binary_operator();
   test_unary_operator();

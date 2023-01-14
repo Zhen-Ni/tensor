@@ -38,21 +38,28 @@ namespace tsr {
     constexpr const Scalar& sequence_ref(size_t n) const {return data[n];}
 
   public:
-    constexpr Tensor() {};
-    // Seems difficult to use constexpr for initializer_list...
-    Tensor(const std::initializer_list<Scalar>& l) {
+    // Can not use initializer_list for array initialization,
+    // eg: `Tensor(...): data{l} {}`;
+    constexpr Tensor(const std::initializer_list<Scalar>& l) {
       Scalar* it1 = data;
       auto it2 = l.begin();
-      Unroll<0, Shape::size>::map([&it1,&it2](size_t) {*it1=*it2++;});
+      Unroll<0, Shape::size>::map([&it1,&it2](size_t) {*it1++=*it2++;});
     }
+    // Default copy constructor is always synthetize!
+    // This is for constructing from other TensorBases objects.
     template<typename U>
-    constexpr Tensor(const TensorBase<U>& t) {this->operator=(t);}
+    constexpr Tensor(const TensorBase<U>& t) {operator=(t);}
+    
+    template<typename E,
+             std::enable_if_t<std::is_convertible<E, Scalar>::value, int> = 0>
+    constexpr Tensor(const E& e): data{e} {}
     // The following constructor is enabled only when the number
-    // of input arguments is larger than 1.
-    // Note that the default constructor is selected when there's
-    // no input arguments.
+    
+    // of input arguments is not equal to 1 or the input argument
+    // is not a TensorBase type.
     template <typename... E,
-              std::enable_if_t<sizeof...(E) != 1, int> = 0>
+              std::enable_if_t<sizeof...(E) != 1, int> = 0
+              >
     constexpr Tensor(const E&... e): data{e...} {}
 
     using Parent::operator=;    
