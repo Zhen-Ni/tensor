@@ -45,10 +45,12 @@ namespace tsr {
       auto it2 = l.begin();
       Unroll<0, Shape::size>::map([&it1,&it2](size_t) {*it1++=*it2++;});
     }
-    // Default copy constructor is always synthetize!
+    // Default copy constructor is always synthetized!
     // This is for constructing from other TensorBases objects.
+    // Note that data needs to be initialized here (until C++20),
+    // See discussion on: https://stackoverflow.com/questions/59662404/legitimate-to-initialize-an-array-in-a-constexpr-constructor
     template<typename U>
-    constexpr Tensor(const TensorBase<U>& t) {operator=(t);}
+    constexpr Tensor(const TensorBase<U>& t): data{} {operator=(t);}
     
     template<typename E,
              std::enable_if_t<std::is_convertible<E, Scalar>::value, int> = 0>

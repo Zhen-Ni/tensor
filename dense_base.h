@@ -38,7 +38,7 @@ namespace tsr {
     // see https://stackoverflow.com/questions/14085620/why-do-c11-deleted-functions-participate-in-overload-resolution.
     // Thus, we need to explicitly implement this member function,
     // by calling the template version.
-    DenseBase& operator=(const DenseBase& other) {
+    constexpr DenseBase& operator=(const DenseBase& other) {
       return operator=<Derived>(other);
     }
     

@@ -66,10 +66,10 @@ int test_map() {
 int test_constant() {
   cout << "test constant" << endl;
 
-  Constant<double, 2, 3> c1(1.2);
+  constexpr Constant<double, 2, 3> c1(1.2);
   cout << c1 << endl;
 
-  auto c2 = c1;
+  constexpr auto c2 = c1;
   cout << c2 << endl;
   
   cout << "test constant complete" << endl;
@@ -99,9 +99,9 @@ int test_binary_operator() {
 
 int test_unary_operator() {
   cout << "test unary operator" << endl;
-  constexpr Tensor<float, 2> a(1.5f, 2.5f);
-  Tensor<float, 2> b = -a;
-  assert((a==-b).all());
+  constexpr Tensor<float, 1> a(1.5f);
+  constexpr Tensor<float, 1> b = -a;
+  static_assert((a==-b).all(), "error");
   cout << "test unary operator complete" << endl;
   return 0;
 }
@@ -110,7 +110,7 @@ int test_unary_operator() {
 int main() {
 
   test_tensor();
-   test_map();
+  test_map();
   test_constant();
   test_binary_operator();
   test_unary_operator();
