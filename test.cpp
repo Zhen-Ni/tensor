@@ -148,7 +148,14 @@ int test_dot() {
   constexpr auto e = Tensor<int, 4, 3, 2>::linspace(0, 1);
   static_assert((dot(d, e)[0][0]==Tensor<int, 3, 2>(84, 90, 96, 102, 108, 114)).all(), "error");
   static_assert((dot(d, e)[1][2]==Tensor<int, 3, 2>(804, 890, 976, 1062, 1148, 1234)).all(), "error");
-  
+
+  // test ndot
+  constexpr Tensor<int, 2, 3, 3, 2> g1 = ndot<1>(d, e);
+  static_assert((g1==dot(d, e)).all(), "error");
+  constexpr Tensor<int> g2 = ndot<2>(a, a);
+  static_assert(g2() == 204, "error");
+  constexpr Tensor<int, 2, 2> g3 = ndot<0>(e[0][1], e[0][1]);
+  static_assert((g3 == Tensor<int, 2, 2>(4, 6, 6, 9)).all(), "error");
   
   cout << "test dot complete" << endl;
   return 0;

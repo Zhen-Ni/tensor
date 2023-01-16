@@ -71,11 +71,39 @@ namespace tsr {
       using type = ShapeType<>;
     };
 
+
+    // Shortcuts
     
-    // template<size_t dimn, size_t... dims>
-    // struct shape_rev<ShapeType<dims..., dimn>> {
-      // using type = int;
-    // };
+    template<typename T, size_t n>
+    struct shape_remove_first_n {
+      using type = typename shape_remove_first_n<typename T::ContainedType, n - 1>::type;
+    };
+    template<typename T>
+    struct shape_remove_first_n<T, 0> {
+      static_assert(!std::is_same<T, void>::value,
+                    "shape dimension less than n");
+      using type = T;
+    };
+    
+    template<typename T, size_t n>
+    using shape_remove_fisrt_n_t = typename shape_remove_first_n<T, n>::type;
+
+    template<typename T, size_t n>
+    struct shape_get_last_n {
+      static_assert(n <= T::dimension, "shape dimension less than n");
+      using type = shape_remove_fisrt_n_t<T, T::dimension - n>;
+    };
+
+    template<typename T, size_t n>
+    using shape_get_last_n_t = typename shape_get_last_n<T, n>::type;
+
+    template<typename T, size_t n>
+    struct shape_get_first_n {
+      using type = shape_rev_t<shape_get_last_n_t<shape_rev_t<T>, n>>;
+    };
+
+    template<typename T, size_t n>
+    using shape_get_first_n_t = typename shape_get_first_n<T, n>::type;
 
 
   } // end of namespace internal

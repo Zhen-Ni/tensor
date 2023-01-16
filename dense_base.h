@@ -44,6 +44,8 @@ namespace tsr {
     
     template<typename U>
     constexpr Derived& operator=(const TensorBase<U>& other) {
+      static_assert(std::is_same<Shape, typename U::Shape>::value,
+                    "shapes of tensors for assigning should be the same");
       // C++ supports constexpr lambda since C++17
 #if __cplusplus >= 201703L
       Unroll<0, Shape::size>::
