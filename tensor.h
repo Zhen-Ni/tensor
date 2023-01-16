@@ -76,6 +76,34 @@ namespace tsr {
 
 
     // Additional class methods
+    
+    template<typename U>
+    constexpr Tensor& operator+=(const TensorBase<U>& rhs) {
+      *this = *this + rhs;
+      return *this;
+    }
+    template<typename U>
+    constexpr Tensor& operator-=(const TensorBase<U>& rhs) {
+      *this = *this - rhs;
+      return *this;
+    }
+    template<typename U>
+    constexpr Tensor& operator*=(const TensorBase<U>& rhs) {
+      *this = *this * rhs;
+      return *this;
+    }
+    template<typename U>
+    constexpr Tensor& operator/=(const TensorBase<U>& rhs) {
+      *this = *this / rhs;
+      return *this;
+    }
+    template<typename U>
+    constexpr Tensor& operator%=(const TensorBase<U>& rhs) {
+      *this = *this % rhs;
+      return *this;
+    }
+
+    // Static functions for the class
 
     static constexpr Tensor linspace(const Scalar& start, const Scalar& step) {
       Tensor res;

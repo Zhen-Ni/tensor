@@ -102,6 +102,14 @@ int test_binary_operator() {
   // type of `res` is `Tensor`, as `eval` is used.
   auto res = (f / Constant<double, 2, 3>(1.)).eval();
   assert((res == Tensor<double, 2, 3>::linspace(3, 3)).all());
+
+  auto g = a;
+  g += b;
+  g -= b;
+  g *= b;
+  g /= b;
+  assert((g == a).all());
+  
   cout << "test binary operator complete" << endl;
   return 0;
 }
