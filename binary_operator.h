@@ -12,14 +12,14 @@ namespace tsr{
   template <template<typename, typename, typename> class OperatorTemplate,
             typename Lhs,
             typename Rhs,
-            typename Result=decltype(typename Lhs::Scalar() +
-                                     typename Rhs::Scalar()),
-            std::enable_if_t<
-              std::is_same<typename Lhs::Shape,
-                           typename Rhs::Shape>::value, int> = 0
-            >
+            typename Result>
   class BinaryOperator:
     public TensorBase<BinaryOperator<OperatorTemplate, Lhs, Rhs, Result>> {
+    // Make sure the dimensions are correct.
+    static_assert(std::is_same<typename Lhs::Shape,
+                  typename Rhs::Shape>::value,
+                  "dimensions of lhs and rhs should be the same");
+    
     const Lhs& lhs;
     const Rhs& rhs;
     using Operator = OperatorTemplate<typename Lhs::Scalar,
@@ -56,7 +56,9 @@ namespace tsr{
   template <typename Lhs, typename Rhs>
   inline constexpr auto operator+(const TensorBase<Lhs>& lhs,
                                   const TensorBase<Rhs>& rhs) {
-    return BinaryOperator<AddOperator, Lhs, Rhs>(lhs, rhs);
+    return BinaryOperator<AddOperator, Lhs, Rhs,
+                          decltype(typename Lhs::Scalar() +
+                                   typename Rhs::Scalar())>(lhs, rhs);
   }
 
   template <typename Lhs, typename Rhs, typename Res>
@@ -67,7 +69,9 @@ namespace tsr{
   template <typename Lhs, typename Rhs>
   inline constexpr auto operator-(const TensorBase<Lhs>& lhs,
                                   const TensorBase<Rhs>& rhs) {
-    return BinaryOperator<SubOperator, Lhs, Rhs>(lhs, rhs);
+    return BinaryOperator<SubOperator, Lhs, Rhs,
+                          decltype(typename Lhs::Scalar() -
+                                   typename Rhs::Scalar())>(lhs, rhs);
   }
 
   template <typename Lhs, typename Rhs, typename Res>
@@ -78,7 +82,9 @@ namespace tsr{
   template <typename Lhs, typename Rhs>
   inline constexpr auto operator*(const TensorBase<Lhs>& lhs,
                                   const TensorBase<Rhs>& rhs) {
-    return BinaryOperator<MulOperator, Lhs, Rhs>(lhs, rhs);
+    return BinaryOperator<MulOperator, Lhs, Rhs,
+                          decltype(typename Lhs::Scalar() *
+                                   typename Rhs::Scalar())>(lhs, rhs);
   }
   
   template <typename Lhs, typename Rhs, typename Res>
@@ -89,7 +95,9 @@ namespace tsr{
   template <typename Lhs, typename Rhs>
   inline constexpr auto operator/(const TensorBase<Lhs>& lhs,
                                   const TensorBase<Rhs>& rhs) {
-    return BinaryOperator<DivOperator, Lhs, Rhs>(lhs, rhs);
+    return BinaryOperator<DivOperator, Lhs, Rhs,
+                          decltype(typename Lhs::Scalar() /
+                                   typename Rhs::Scalar())>(lhs, rhs);
   }
 
   template <typename Lhs, typename Rhs, typename Res>
@@ -100,7 +108,9 @@ namespace tsr{
   template <typename Lhs, typename Rhs>
   inline constexpr auto operator%(const TensorBase<Lhs>& lhs,
                                   const TensorBase<Rhs>& rhs) {
-    return BinaryOperator<DivModOperator, Lhs, Rhs>(lhs, rhs);
+    return BinaryOperator<DivModOperator, Lhs, Rhs,
+                          decltype(typename Lhs::Scalar() %
+                                   typename Rhs::Scalar())>(lhs, rhs);
   }
 
   template <typename Lhs, typename Rhs, typename Res>

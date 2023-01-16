@@ -57,19 +57,11 @@ namespace tsr {
        return *get_derived();
     }
     
-    template<typename... Index,
-             // Make sure the number of arguments is correct
-             std::enable_if_t<
-               sizeof...(Index)==Shape::dimension, int> =0
-             >
+    template<typename... Index>
     constexpr auto& operator()(Index... index) {
       return sequence_ref(Shape::decode_index(index...));
     }
-    template<typename... Index,
-             // Make sure the number of arguments is correct
-             std::enable_if_t<
-               sizeof...(Index)==Shape::dimension, int> =0
-             >
+    template<typename... Index>
     constexpr const auto& operator()(Index... index) const {
       return sequence_ref(Shape::decode_index(index...));
     }

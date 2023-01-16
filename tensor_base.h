@@ -59,17 +59,11 @@ namespace tsr {
     constexpr auto sequence(size_t n) {return get_derived()->sequence(n);}
     constexpr auto sequence(size_t n) const {return get_derived()->sequence(n);}
     
-    template<typename... Index,
-             // Make sure the number of arguments is correct
-             std::enable_if_t<
-               sizeof...(Index)==Shape::dimension, int> = 0>
+    template<typename... Index>
     constexpr auto operator()(Index... index) {
       return sequence(Shape::decode_index(index...));
     }
-    template<typename... Index,
-               // Make sure the number of arguments is correct
-             std::enable_if_t<
-               sizeof...(Index)==Shape::dimension, int> = 0>
+    template<typename... Index>
     constexpr auto operator()(Index... index) const {
       return sequence(Shape::decode_index(index...));
     }
