@@ -73,16 +73,38 @@ namespace tsr {
     constexpr auto operator[](size_t n) const
     {return typename internal::map_slice<const Scalar, dims...>::type
         (&data[Shape::stride * n]);}
+
+
+    // Additional class methods
+
+    static constexpr Tensor linspace(const Scalar& start, const Scalar& step) {
+      Tensor res;
+      // C++ supports constexpr lambda since C++17
+#if __cplusplus >= 201703L
+      Scalar value = start;
+      Unroll<0, Shape::size>::map([&](size_t i) constexpr {
+        res.sequence_ref(i) = value;
+        value += step;
+      });
+#else
+      Scalar value = start;
+      for (size_t i = 0; i != Shape::size; ++i) {
+        res.sequence_ref(i) = value;
+        value += step;
+      }
+#endif
+      return res;
+    }
+    
   };
 
-
-    
 
   template <typename T, size_t... dims>
   struct BaseTraits<Tensor<T, dims...>> {
     using Shape = internal::ShapeType<dims...>;
     using Scalar = T;
-  };  
+  };
+  
   
 } // namespace tsr
 

@@ -32,6 +32,9 @@ namespace tsr {
       using type = Tensor<T, dims...>;
     };
 
+    template <typename T, typename ShapeType, size_t... dims>
+    using get_tensor_t = typename get_tensor<T, ShapeType, dims...>::type;
+
   } // end of namespace internal
   
   
@@ -73,7 +76,7 @@ namespace tsr {
 
     // This constexpr only works since c++20
     constexpr auto eval() const {
-      typename internal::get_tensor<Scalar, Shape>::type res;
+      typename internal::get_tensor_t<Scalar, Shape> res;
       res = *this;
       return res;
     }
