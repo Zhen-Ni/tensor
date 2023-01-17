@@ -68,7 +68,6 @@ namespace tsr {
       return sequence(Shape::decode_index(index...));
     }
 
-    // This constexpr only works since c++20
     constexpr auto eval() const {
       typename internal::get_tensor_t<Scalar, Shape> res;
       res = *this;

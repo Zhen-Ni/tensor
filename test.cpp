@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <iostream>
+#include <tuple>
 using namespace std;
 
 #include "tensor"
@@ -171,6 +172,14 @@ int main() {
   test_binary_operator();
   test_unary_operator();
   test_dot();
+
+  auto aa = Tensor<int, 2000>::linspace(1, 1);
+  constexpr auto a = Tensor<int, 5, 4, 3>::linspace(0,1);
+  constexpr auto res = internal::ShapeType<5,4,3>::encode_index(34);
+  cout << std::get<0>(res) << " " << std::get<1>(res) << " " << std::get<2>(res) << std::endl;
+  cout << internal::ShapeType<5,4,3>::decode_index(2, 3, 1) << endl;
+  std::apply(decltype(a)::Shape::decode_index, res);
+  constexpr auto b = (a+a).eval();
   
   return 0;
 }

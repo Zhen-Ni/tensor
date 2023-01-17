@@ -22,11 +22,12 @@ namespace tsr {
       static constexpr size_t dimension = sizeof...(dims) + 1;
       static constexpr size_t stride = ShapeType<dims...>::size;
       static constexpr size_t size = dim0 * stride;
-      template <typename... Rest>
-      static constexpr size_t decode_index(size_t n, Rest... rest) {
-        static_assert(sizeof...(Rest) == sizeof...(dims),
-                      "index number should be the same with dimension");
+      static constexpr size_t decode_index(size_t n, decltype(dims)... rest) {
         return n * stride + ContainedType::decode_index(rest...);
+      }
+      static constexpr auto encode_index(size_t n) {
+        return std::tuple_cat(std::make_tuple(n / ContainedType::size),
+                              ContainedType::encode_index(n % ContainedType::size));
       }
     };
   
@@ -39,6 +40,7 @@ namespace tsr {
       static constexpr size_t stride = 1; // undefined: can be any value
       static constexpr size_t size = 1;
       static constexpr size_t decode_index() { return 0; }
+      static constexpr std::tuple<> encode_index(size_t) {return {};}
     };
 
     

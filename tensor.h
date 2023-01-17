@@ -43,7 +43,8 @@ namespace tsr {
     constexpr Tensor(const std::initializer_list<Scalar>& l) {
       Scalar* it1 = data;
       auto it2 = l.begin();
-      Unroll<0, Shape::size>::map([&it1,&it2](size_t) {*it1++=*it2++;});
+      Unroll<0, Shape::size>::map([&it1, &it2](size_t)
+      {*it1++ = *it2++;});
     }
     // Default copy constructor is always synthetized!
     // This is for constructing from other TensorBases objects.
@@ -107,8 +108,7 @@ namespace tsr {
 
     static constexpr Tensor linspace(const Scalar& start, const Scalar& step) {
       Tensor res;
-      // C++ supports constexpr lambda since C++17
-#if __cplusplus >= 201703L
+#ifdef TSR_UNROLL
       Scalar value = start;
       Unroll<0, Shape::size>::map([&](size_t i) constexpr {
         res.sequence_ref(i) = value;

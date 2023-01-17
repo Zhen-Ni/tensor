@@ -46,17 +46,23 @@ namespace tsr {
     constexpr Derived& operator=(const TensorBase<U>& other) {
       static_assert(std::is_same<Shape, typename U::Shape>::value,
                     "shapes of tensors for assigning should be the same");
+#ifdef TSR_UNROLL
       // C++ supports constexpr lambda since C++17
 #if __cplusplus >= 201703L
       Unroll<0, Shape::size>::
         map([&](size_t index, const TensorBase<U>& y) constexpr {
           sequence_ref(index)=y.sequence(index);},
           other);
-#else
+#else  // ifdef __cplusplus >= 201703L
       Unroll<0, Shape::size>::
         assign(*this, other);
-#endif
-       return *get_derived();
+#endif  // ifdef __cplusplus >= 201703L
+#else   // #ifdef TSR_UNROLL
+      for (size_t i = 0; i != Shape::size; ++i) {
+        sequence_ref(i) = other.sequence(i);
+      }
+#endif  // #ifdef TSR_UNROLL
+      return *get_derived();
     }
     
     template<typename... Index>
