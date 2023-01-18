@@ -17,6 +17,7 @@
 #include "unary_operator.h"
 #include "binary_operator.h"
 #include "dot.h" 
+#include "transpose.h"
 
 #include "io.h"
 

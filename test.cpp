@@ -163,6 +163,30 @@ int test_dot() {
 }
 
 
+int test_transpose() {
+  cout << "test transpose" << endl;
+  
+  constexpr Tensor<int> a0(2);
+  static_assert(transpose(a0)() == 2, "error");
+
+  constexpr Tensor<int, 3> a1{3, 4, 5};
+  static_assert((transpose(a1).eval() == Tensor<int, 3>{3, 4, 5}).all(), "error");
+
+  constexpr Tensor<int, 2, 2> a2{1, 2, 3, 4};
+  static_assert((transpose(a2).eval() == Tensor<int, 2, 2>(1, 3, 2, 4)).all(), "error");
+
+  constexpr auto a3 = Tensor<int, 2, 3, 4>::linspace(0,1);
+  static_assert((transpose(a3) ==
+                 Tensor<int, 4, 3, 2>(0, 12, 4, 16, 8, 20,
+                                      1, 13, 5, 17, 9, 21,
+                                      2, 14, 6, 18, 10, 22,
+                                      3, 15, 7, 19, 11, 23)).all(), "error");
+  
+  
+  cout << "test transpose complete" << endl;
+  return 0;
+}
+
 int main() {
 
   test_tensor();
@@ -172,14 +196,7 @@ int main() {
   test_binary_operator();
   test_unary_operator();
   test_dot();
-
-  auto aa = Tensor<int, 2000>::linspace(1, 1);
-  constexpr auto a = Tensor<int, 5, 4, 3>::linspace(0,1);
-  constexpr auto res = internal::ShapeType<5,4,3>::encode_index(34);
-  cout << std::get<0>(res) << " " << std::get<1>(res) << " " << std::get<2>(res) << std::endl;
-  cout << internal::ShapeType<5,4,3>::decode_index(2, 3, 1) << endl;
-  std::apply(decltype(a)::Shape::decode_index, res);
-  constexpr auto b = (a+a).eval();
+  test_transpose();
   
   return 0;
 }
