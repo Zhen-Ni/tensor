@@ -14,14 +14,9 @@ namespace tsr{
             typename Rhs,
             typename Result>
   class BinaryOperator:
-    public TensorBase<BinaryOperator<OperatorTemplate, Lhs, Rhs, Result>> {
-    // Make sure the dimensions are correct.
-    static_assert(std::is_same<typename Lhs::Shape,
-                  typename Rhs::Shape>::value,
-                  "dimensions of lhs and rhs should be the same");
-    
-    const Lhs& lhs;
-    const Rhs& rhs;
+    public TensorBase<BinaryOperator<OperatorTemplate, Lhs, Rhs, Result>> {   
+    const TensorBase<Lhs>& lhs;
+    const TensorBase<Rhs>& rhs;
     using Operator = OperatorTemplate<typename Lhs::Scalar,
                                       typename Rhs::Scalar,
                                       Result>;
@@ -29,7 +24,7 @@ namespace tsr{
   public:
     constexpr BinaryOperator(const TensorBase<Lhs>& lhs,
                              const TensorBase<Rhs>& rhs):
-      lhs(*static_cast<const Lhs*>(&lhs)), rhs(*static_cast<const Rhs*>(&rhs)) {}
+      lhs(lhs), rhs(rhs) {}
 
     constexpr auto sequence(size_t n) const {
       return Operator::call(lhs.sequence(n), rhs.sequence(n));
@@ -37,12 +32,16 @@ namespace tsr{
     
   };
 
-  
-  template <template<typename, typename, typename> class OperatorTemplate,
-            typename Lhs,
-            typename Rhs,
-            typename Result>
+
+  template <template <typename, typename, typename> class OperatorTemplate,
+            typename Lhs, typename Rhs, typename Result>
   struct BaseTraits<BinaryOperator<OperatorTemplate, Lhs, Rhs, Result>> {
+    static_assert(std::is_base_of<TensorBase<Lhs>, Lhs>::value, "BinaryOperator template should be subclass of TensorBase");
+    static_assert(std::is_base_of<TensorBase<Rhs>, Rhs>::value, "BinaryOperator template should be subclass of TensorBase");
+    // Make sure the dimensions are correct.
+    static_assert(std::is_same<typename Lhs::Shape,
+                  typename Rhs::Shape>::value,
+                  "dimensions of lhs and rhs should be the same");
     using Shape = typename Lhs::Shape;
     using Scalar = Result;
   };

@@ -22,18 +22,17 @@ namespace tsr {
   
 
   namespace internal{
-    template <typename T, typename ShapeType, size_t... dims>
-    struct get_tensor {
-      using type = typename get_tensor<T, typename ShapeType::ContainedType, dims..., ShapeType::size0>::type;
-    };
+
+    template <typename T, typename ShapeType>
+    struct get_tensor;
 
     template <typename T, size_t... dims>
-    struct get_tensor<T, internal::ShapeType<>, dims...> {
+    struct get_tensor<T, ShapeType<dims...>> {
       using type = Tensor<T, dims...>;
     };
-
-    template <typename T, typename ShapeType, size_t... dims>
-    using get_tensor_t = typename get_tensor<T, ShapeType, dims...>::type;
+    
+    template <typename T, typename ShapeType>
+    using get_tensor_t = typename get_tensor<T, ShapeType>::type;
 
   } // end of namespace internal
   
@@ -56,7 +55,7 @@ namespace tsr {
     }
         
   public:
-    constexpr auto sequence(size_t n) {return get_derived()->sequence(n);}
+    // constexpr auto sequence(size_t n) {return get_derived()->sequence(n);}
     constexpr auto sequence(size_t n) const {return get_derived()->sequence(n);}
     
     template<typename... Index>

@@ -33,6 +33,7 @@ namespace tsr{
             typename Operand,
             typename Result>
   struct BaseTraits<UnaryOperator<OperatorTemplate, Operand, Result>> {
+    static_assert(std::is_base_of<TensorBase<Operand>, Operand>::value, "UnaryOperator template should be subclass of TensorBase");
     using Shape = typename Operand::Shape;
     using Scalar = Result;
   };

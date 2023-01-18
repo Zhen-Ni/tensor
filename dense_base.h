@@ -25,7 +25,7 @@ namespace tsr {
     
   public:
 
-    constexpr Scalar sequence(size_t n) {return sequence_ref(n);}
+    // constexpr Scalar sequence(size_t n) {return sequence_ref(n);}
     constexpr const Scalar sequence(size_t n) const {return sequence_ref(n);}
 
     constexpr Scalar& sequence_ref(size_t n) {return get_derived()->sequence_ref(n);}
@@ -47,16 +47,10 @@ namespace tsr {
       static_assert(std::is_same<Shape, typename U::Shape>::value,
                     "shapes of tensors for assigning should be the same");
 #ifdef TSR_UNROLL
-      // C++ supports constexpr lambda since C++17
-#if __cplusplus >= 201703L
       Unroll<0, Shape::size>::
-        map([&](size_t index, const TensorBase<U>& y) constexpr {
+        map([&](size_t index, const TensorBase<U>& y) {
           sequence_ref(index)=y.sequence(index);},
           other);
-#else  // ifdef __cplusplus >= 201703L
-      Unroll<0, Shape::size>::
-        assign(*this, other);
-#endif  // ifdef __cplusplus >= 201703L
 #else   // #ifdef TSR_UNROLL
       for (size_t i = 0; i != Shape::size; ++i) {
         sequence_ref(i) = other.sequence(i);

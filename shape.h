@@ -8,8 +8,6 @@
 #endif
 
 namespace tsr {
-
-  namespace internal {
   
     template <size_t... dims>
     struct ShapeType;
@@ -25,9 +23,10 @@ namespace tsr {
       static constexpr size_t decode_index(size_t n, decltype(dims)... rest) {
         return n * stride + ContainedType::decode_index(rest...);
       }
-      static constexpr auto encode_index(size_t n) {
+        static constexpr auto encode_index(size_t n) {
         return std::tuple_cat(std::make_tuple(n / ContainedType::size),
-                              ContainedType::encode_index(n % ContainedType::size));
+        ContainedType::encode_index(n %
+        ContainedType::size));
       }
     };
   
@@ -40,7 +39,7 @@ namespace tsr {
       static constexpr size_t stride = 1; // undefined: can be any value
       static constexpr size_t size = 1;
       static constexpr size_t decode_index() { return 0; }
-      static constexpr std::tuple<> encode_index(size_t) {return {};}
+      static constexpr std::tuple<> encode_index(size_t) { return {}; }
     };
 
     
@@ -107,8 +106,6 @@ namespace tsr {
     template<typename T, size_t n>
     using shape_get_first_n_t = typename shape_get_first_n<T, n>::type;
 
-
-  } // end of namespace internal
   
 } // end of namespace tsr
 

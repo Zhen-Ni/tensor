@@ -25,7 +25,7 @@ namespace tsr {
 
   template <typename T, size_t... dims>
   struct BaseTraits<Constant<T, dims...>> {
-    using Shape = internal::ShapeType<dims...>;
+    using Shape = ShapeType<dims...>;
     using Scalar = T;
   };
 

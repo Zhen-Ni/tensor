@@ -15,6 +15,7 @@ namespace tsr {
   namespace internal{
     template <typename T, size_t... dims>
     struct map_slice {
+      static_assert(sizeof...(dims), "can not get slice for tensor with dimension = 0");
       using type = void;
     };
 
@@ -66,7 +67,7 @@ namespace tsr {
 
   template <typename T, size_t... dims>
   struct BaseTraits<Map<T, dims...>> {
-    using Shape = internal::ShapeType<dims...>;
+    using Shape = ShapeType<dims...>;
     using Scalar = T;
   };
   

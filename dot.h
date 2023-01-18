@@ -14,27 +14,27 @@ namespace tsr {
                      const TensorBase<Rhs>& rhs) {
     // Make sure the shape of the two tensors are correct.
     static_assert(std::is_same<
-                  typename internal::shape_get_last_n_t<typename Lhs::Shape, n>,
-                  typename internal::shape_get_first_n_t<typename Rhs::Shape, n>
+                  shape_get_last_n_t<typename Lhs::Shape, n>,
+                  shape_get_first_n_t<typename Rhs::Shape, n>
                   >::value,
                   "tensor shape not correct for ndot");
     
-    using Shape1 = typename internal::shape_get_first_n_t<
+    using Shape1 = shape_get_first_n_t<
       typename Lhs::Shape, Lhs::Shape::dimension - n>;
-    using Shape2 = typename internal::shape_get_last_n_t<
+    using Shape2 = shape_get_last_n_t<
       typename Rhs::Shape, Rhs::Shape::dimension - n>;
-    using Shape = internal::shape_cat_t<Shape1, Shape2>;
+    using Shape = shape_cat_t<Shape1, Shape2>;
     using Scalar = decltype(typename Lhs::Scalar() *
                             typename Rhs::Scalar());
     using Res = typename internal::get_tensor_t<Scalar, Shape>;
-    constexpr size_t contraction_size = internal::shape_get_last_n_t<typename Lhs::Shape, n>::size;
+    constexpr size_t contraction_size = shape_get_last_n_t<typename Lhs::Shape, n>::size;
     
     Res res;
     
     #ifdef TSR_UNROLL
-    Unroll<0, Res::Shape::size>::map([&](size_t i) constexpr {
+    Unroll<0, Res::Shape::size>::map([&](size_t i) {
       Scalar sum{};
-      Unroll<0, contraction_size>::map([&](size_t j) constexpr {
+      Unroll<0, contraction_size>::map([&](size_t j) {
         sum += lhs.sequence(contraction_size * (i / Shape2::size) + j) *
           rhs.sequence(Shape2::size * j + i % Shape2::size);
       });

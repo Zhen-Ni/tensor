@@ -40,7 +40,7 @@ namespace tsr {
   public:
     // Can not use initializer_list for array initialization,
     // eg: `Tensor(...): data{l} {}`;
-    constexpr Tensor(const std::initializer_list<Scalar>& l) {
+    constexpr Tensor(const std::initializer_list<Scalar>& l): data{} {
       Scalar* it1 = data;
       auto it2 = l.begin();
       Unroll<0, Shape::size>::map([&it1, &it2](size_t)
@@ -129,7 +129,7 @@ namespace tsr {
 
   template <typename T, size_t... dims>
   struct BaseTraits<Tensor<T, dims...>> {
-    using Shape = internal::ShapeType<dims...>;
+    using Shape = ShapeType<dims...>;
     using Scalar = T;
   };
   
